@@ -4,54 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tip Your Waiter | Tipsy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Roboto', sans-serif; background-color: #f5f7fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background: white; width: 100%; max-width: 380px; padding: 40px 30px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; box-sizing: border-box; }
+        .card { background: white; width: 100%; max-width: 380px; padding: 30px 25px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; box-sizing: border-box; }
         
-        /* HEADER & AVATAR */
-        .avatar-container { position: relative; width: 100px; height: 100px; margin: 0 auto 15px; }
+        /* HEADER & AVATAR MATCHING APP */
+        .avatar-container { position: relative; width: 100px; height: 100px; margin: 0 auto 10px; }
         .avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; z-index: 2; }
+        /* The Orange Arc */
         .avatar-arc { position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px; border-radius: 50%; border: 3px solid transparent; border-top-color: #FF9800; z-index: 1; transform: rotate(-45deg); }
         
-        h2 { margin: 10px 0 5px; color: #333; font-size: 1.8em; font-weight: bold; }
-        p.location { color: #999; margin: 0 0 30px; font-size: 1.1em; }
+        h2 { margin: 10px 0 0; color: #333; font-size: 1.8em; font-weight: 700; }
+        p.location { color: #999; margin: 5px 0 25px; font-size: 1em; font-weight: 400; }
 
         /* AMOUNT DISPLAY */
-        .tip-label { font-size: 0.9em; color: #888; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
-        .amount-wrapper { display: flex; justify-content: center; align-items: center; margin: 10px 0 20px; }
+        .label-small { font-size: 0.9em; color: #888; font-weight: 500; margin-bottom: 5px; display: block; }
+        .amount-wrapper { display: flex; justify-content: center; align-items: center; margin-bottom: 15px; }
         .currency { font-size: 2.5em; color: #FF5722; font-weight: bold; margin-right: 5px; }
-        .amount-display { font-size: 3.5em; color: #ccc; font-weight: bold; border: none; width: 180px; text-align: center; outline: none; background: transparent; }
+        /* Grey when 0, Orange when active - handled by JS */
+        .amount-display { font-size: 3.5em; color: #e0e0e0; font-weight: bold; border: none; width: 200px; text-align: center; outline: none; background: transparent; transition: color 0.2s; }
         .amount-display.active { color: #333; }
 
-        /* SLIDERS */
-        .slider-container { margin: 25px 0; text-align: center; }
+        /* ANDROID STYLE SLIDERS */
+        .slider-container { margin: 15px 0 25px; text-align: center; width: 100%; }
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; }
         input[type=range]:focus { outline: none; }
         
-        /* Orange Tip Slider */
-        #tip-slider::-webkit-slider-runnable-track { width: 100%; height: 12px; background: #FFCC80; border-radius: 10px; border: none; }
-        #tip-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 6px; border-radius: 3px; background: #FF9800; margin-top: -6px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        /* 1. TIP SLIDER (Thick Orange Track) */
+        #tip-slider::-webkit-slider-runnable-track { width: 100%; height: 24px; background: #FFCC80; border-radius: 12px; border: none; }
+        #tip-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%; background: #FF9800; margin-top: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: scale(0.8); }
 
-        /* Blue Rating Slider */
-        .rating-label { font-size: 0.9em; color: #888; font-weight: bold; margin-top: 20px; display: block; }
-        .rating-val { font-size: 1.5em; color: #FF9800; font-weight: bold; display: block; margin-bottom: 5px; }
+        /* 2. RATING SECTION */
+        .rating-val { font-size: 1.5em; color: #FF9800; font-weight: bold; display: block; margin: 5px 0 10px; }
         
-        #rating-slider::-webkit-slider-runnable-track { width: 100%; height: 8px; background: #E1F5FE; border-radius: 10px; }
-        #rating-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #039BE5; margin-top: -4px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        /* RATING SLIDER (Thick Blue/Grey Track) */
+        #rating-slider::-webkit-slider-runnable-track { width: 100%; height: 16px; background: #E3F2FD; border-radius: 8px; }
+        #rating-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #2196F3; margin-top: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
         /* COMMENT BOX */
-        .comment-box { width: 100%; padding: 15px; border: 1px solid #e0e0e0; border-radius: 15px; margin-top: 10px; font-family: inherit; font-size: 1em; color: #555; background: #f9f9f9; box-sizing: border-box; resize: none; outline: none; }
+        .comment-box { width: 100%; padding: 15px; border: 1px solid #e0e0e0; border-radius: 15px; margin-bottom: 25px; font-family: inherit; font-size: 1em; color: #555; background: #fff; box-sizing: border-box; resize: none; outline: none; }
         .comment-box::placeholder { color: #bbb; }
 
-        /* SWIPE BUTTON (VISUAL REPLICA) */
-        .swipe-btn-container { margin-top: 30px; position: relative; height: 60px; background: #eee; border-radius: 30px; overflow: hidden; cursor: pointer; transition: background 0.3s; }
-        .swipe-btn-container:active { background: #e0e0e0; }
+        /* SWIPE BUTTON SIMULATION */
+        .swipe-container { position: relative; width: 100%; height: 60px; background: #eee; border-radius: 30px; overflow: hidden; cursor: pointer; user-select: none; }
+        .swipe-text { line-height: 60px; color: #999; font-weight: bold; font-size: 1.1em; padding-left: 20px; z-index: 1; position: relative; }
         
-        .swipe-circle { width: 50px; height: 50px; background: #FF9800; border-radius: 50%; position: absolute; top: 5px; left: 5px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: transform 0.2s; }
-        .swipe-arrow { color: white; font-size: 1.2em; font-weight: bold; }
-        
-        .swipe-text { line-height: 60px; color: #999; font-weight: bold; font-size: 1.1em; padding-left: 40px; user-select: none; }
-        
+        .swipe-btn { 
+            width: 50px; height: 50px; 
+            background: #FF9800; 
+            border-radius: 50%; 
+            position: absolute; top: 5px; left: 5px; 
+            display: flex; align-items: center; justify-content: center; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+            transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1); 
+            z-index: 2;
+        }
+        .swipe-arrow { color: white; font-size: 1.4em; font-weight: bold; }
+
         .hidden { display: none; }
     </style>
 </head>
@@ -69,7 +79,7 @@
     <h2 id="waiter-name">Name</h2>
     <p class="location" id="restaurant-name">Location</p>
 
-    <div class="tip-label">I want to tip</div>
+    <span class="label-small">I want to tip</span>
     <div class="amount-wrapper">
         <span class="currency">€</span>
         <input type="text" id="amount-text" class="amount-display" value="0.00" readonly>
@@ -79,16 +89,17 @@
         <input type="range" id="tip-slider" min="0" max="20" step="0.5" value="0" oninput="updateTipFromSlider()">
     </div>
 
-    <span class="rating-label">Rate experience</span>
+    <span class="label-small" style="margin-top:20px;">Rate experience</span>
     <span id="rating-val" class="rating-val">0.0</span>
-    <div class="slider-container" style="margin-top:0;">
+    
+    <div class="slider-container">
         <input type="range" id="rating-slider" min="0" max="5" step="1" value="0" oninput="updateRating()">
     </div>
 
     <textarea id="comment" class="comment-box" rows="2" placeholder="Add a comment..."></textarea>
 
-    <div class="swipe-btn-container" onclick="initiatePayment()">
-        <div class="swipe-circle">
+    <div class="swipe-container" onclick="initiatePayment()">
+        <div class="swipe-btn">
             <span class="swipe-arrow">➜</span>
         </div>
         <div class="swipe-text">Swipe to Pay >>></div>
@@ -110,7 +121,8 @@
             const w = await res.json();
             
             document.getElementById('waiter-name').innerText = w.name;
-            document.getElementById('restaurant-name').innerText = w.restaurantId || "Unknown";
+            // Handle null restaurantId like the App does
+            document.getElementById('restaurant-name').innerText = w.restaurant_id || "Unknown Location";
             document.getElementById('waiter-img').src = w.imageUrl || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
             
             document.getElementById('loading').classList.add('hidden');
@@ -124,14 +136,17 @@
         
         display.value = parseFloat(val).toFixed(2);
         
-        // Change color when amount > 0
-        if (val > 0) display.classList.add('active');
-        else display.classList.remove('active');
+        // Match App logic: Grey if 0, Dark/Colored if > 0
+        if (parseFloat(val) > 0) {
+            display.style.color = "#333";
+        } else {
+            display.style.color = "#e0e0e0";
+        }
     }
 
     function updateRating() {
         const val = document.getElementById('rating-slider').value;
-        // Format to 1 decimal place (e.g., 5.0)
+        // App shows "5.0" format
         document.getElementById('rating-val').innerText = parseFloat(val).toFixed(1);
     }
 
@@ -142,10 +157,13 @@
         const rating = parseFloat(document.getElementById('rating-slider').value);
         const comment = document.getElementById('comment').value;
 
-        // Animate button slightly to show click
-        const btn = document.querySelector('.swipe-circle');
-        btn.style.transform = 'translateX(280px)'; // Visual swipe effect
+        // Visual "Swipe" Animation
+        const btn = document.querySelector('.swipe-btn');
+        const containerWidth = document.querySelector('.swipe-container').offsetWidth;
+        // Move button to end of container
+        btn.style.transform = `translateX(${containerWidth - 60}px)`;
         
+        // Wait for animation, then execute
         setTimeout(async () => {
              try {
                 const res = await fetch(`${API_BASE}/payment/initiate-simple`, {
@@ -163,13 +181,13 @@
                 if (data.success && data.payment_url) window.location.href = data.payment_url;
                 else { 
                     alert("Error: " + (data.error || "Unknown"));
-                    btn.style.transform = 'translateX(0)'; // Reset on error
+                    btn.style.transform = 'translateX(0)'; // Reset
                 }
             } catch { 
                 alert("Connection Failed"); 
-                btn.style.transform = 'translateX(0)'; // Reset on error
+                btn.style.transform = 'translateX(0)'; // Reset
             }
-        }, 300); // Wait for animation
+        }, 400);
     }
 </script>
 </body>
