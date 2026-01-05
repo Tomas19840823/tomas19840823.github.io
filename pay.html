@@ -7,81 +7,79 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Roboto', sans-serif; background-color: #f5f7fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; user-select: none; }
-        .card { background: white; width: 100%; max-width: 380px; padding: 35px 25px; border-radius: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; box-sizing: border-box; }
+        .card { background: white; width: 100%; max-width: 380px; padding: 30px 25px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; box-sizing: border-box; }
         
         /* 1. AVATAR: Full Orange Circle */
-        .avatar-container { width: 90px; height: 90px; margin: 0 auto 15px; }
+        .avatar-container { width: 100px; height: 100px; margin: 0 auto 10px; }
         .avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid #FF9800; box-sizing: border-box; }
         
-        h2 { margin: 5px 0 0; color: #333; font-size: 1.8em; font-weight: 700; }
+        h2 { margin: 10px 0 0; color: #333; font-size: 1.8em; font-weight: 700; }
         p.location { color: #999; margin: 5px 0 25px; font-size: 1em; font-weight: 400; }
 
         /* 3. AMOUNT DISPLAY: Orange Color */
-        .label-small { font-size: 0.85em; color: #999; font-weight: 500; margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
-        .amount-wrapper { display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
+        .label-small { font-size: 0.9em; color: #888; font-weight: 500; margin-bottom: 5px; display: block; }
+        .amount-wrapper { display: flex; justify-content: center; align-items: center; margin-bottom: 15px; }
+        .currency { font-size: 2.5em; color: #FF5722; font-weight: bold; margin-right: 5px; }
         
-        /* Orange text */
-        .currency { font-size: 2.8em; color: #FF9800; font-weight: bold; margin-right: 5px; }
-        .amount-display { font-size: 3.5em; color: #bdbdbd; font-weight: bold; border: none; width: 220px; text-align: center; outline: none; background: transparent; transition: color 0.2s; }
-        .amount-display.active { color: #FF9800; } /* Keep grey until typing/sliding? App shows grey 0.00 */
+        /* Default grey, turns Orange when active */
+        .amount-display { font-size: 3.5em; color: #e0e0e0; font-weight: bold; border: none; width: 220px; text-align: center; outline: none; background: transparent; transition: color 0.2s; }
+        .amount-display.active { color: #FF5722; }
+
+        /* 2. SLIDERS: Narrow Strip, Vertical Stick */
+        .slider-container { margin: 15px 0 25px; text-align: center; width: 100%; position: relative; height: 40px; display: flex; align-items: center; }
         
-        /* 2. CUSTOM "STICK" SLIDERS */
-        .slider-container { margin: 15px 0 30px; text-align: center; width: 100%; position: relative; height: 40px; display: flex; align-items: center; }
-        
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
-            cursor: pointer;
-            height: 100%; 
+        input[type=range] { 
+            -webkit-appearance: none; 
+            width: 100%; 
+            background: transparent; 
+            cursor: pointer; 
             z-index: 2;
-            position: relative;
         }
         input[type=range]:focus { outline: none; }
-
+        
         /* --- TIP SLIDER STYLES --- */
-        /* Track */
-        #tip-slider::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 14px;
-            border-radius: 7px;
-            /* Gradient background is set by JS */
+        #tip-slider::-webkit-slider-runnable-track { 
+            width: 100%; 
+            height: 12px; /* Narrower Strip */
+            background: #FFCC80; 
+            border-radius: 6px; 
+            border: none; 
         }
-        /* Stick Thumb */
-        #tip-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 34px; /* Taller than track */
-            width: 6px;   /* The Stick */
-            border-radius: 3px;
-            background: #EF6C00; /* Darker Orange Stick */
-            margin-top: -10px; /* Center vertical */
-            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+        #tip-slider::-webkit-slider-thumb { 
+            -webkit-appearance: none; 
+            height: 32px; /* Tall Stick */
+            width: 8px;   /* Wide Stick thickness */
+            border-radius: 4px; 
+            background: #EF6C00; 
+            margin-top: -10px; /* Center Vertical: (12 - 32) / 2 = -10 */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3); 
         }
 
         /* --- RATING SLIDER STYLES --- */
-        #rating-slider::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 14px;
-            border-radius: 7px;
+        #rating-slider::-webkit-slider-runnable-track { 
+            width: 100%; 
+            height: 12px; /* Narrower Strip */
+            background: #E3F2FD; 
+            border-radius: 6px; 
         }
-        #rating-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 34px;
-            width: 6px; /* The Stick */
-            border-radius: 3px;
-            background: #0277BD; /* Darker Blue Stick */
-            margin-top: -10px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+        #rating-slider::-webkit-slider-thumb { 
+            -webkit-appearance: none; 
+            height: 32px; /* Tall Stick */
+            width: 8px;   /* Wide Stick thickness */
+            border-radius: 4px; 
+            background: #0277BD; 
+            margin-top: -10px; /* Center Vertical */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3); 
         }
 
-        /* RATINGS VALUE */
-        .rating-val { font-size: 1.6em; color: #FF9800; font-weight: bold; display: block; margin: 5px 0 5px; }
+        /* RATING SECTION */
+        .rating-val { font-size: 1.5em; color: #FF9800; font-weight: bold; display: block; margin: 5px 0 10px; }
 
         /* COMMENT BOX */
-        .comment-box { width: 100%; padding: 15px; border: 1px solid #e0e0e0; border-radius: 15px; margin-bottom: 30px; font-family: inherit; font-size: 1em; color: #555; background: #fff; box-sizing: border-box; resize: none; outline: none; }
+        .comment-box { width: 100%; padding: 15px; border: 1px solid #e0e0e0; border-radius: 15px; margin-bottom: 25px; font-family: inherit; font-size: 1em; color: #555; background: #fff; box-sizing: border-box; resize: none; outline: none; }
         .comment-box::placeholder { color: #bbb; }
 
-        /* 5. SWIPE BUTTON */
+        /* 5. REAL SWIPE BUTTON */
         .swipe-container { position: relative; width: 100%; height: 60px; background: #eee; border-radius: 30px; overflow: hidden; cursor: pointer; }
         .swipe-text { line-height: 60px; color: #999; font-weight: bold; font-size: 1.1em; padding-left: 20px; z-index: 1; position: relative; pointer-events: none; }
         
@@ -95,9 +93,11 @@
             z-index: 2;
             cursor: grab;
         }
+        .swipe-btn:active { cursor: grabbing; }
         .swipe-arrow { color: white; font-size: 1.4em; font-weight: bold; pointer-events: none; }
 
         .hidden { display: none; }
+        /* Processing State */
         .swipe-btn.processing { width: 100%; border-radius: 30px; transition: width 0.3s; justify-content: center; }
         .swipe-btn.processing .swipe-arrow { display: none; }
         .swipe-btn.processing::after { content: 'Processing...'; color: white; font-weight: bold; font-size: 1.1em; }
@@ -123,14 +123,14 @@
     </div>
 
     <div class="slider-container">
-        <input type="range" id="tip-slider" min="0" max="20" step="0.5" value="0" oninput="updateTipDisplay()">
+        <input type="range" id="tip-slider" min="0" max="20" step="0.5" value="0" oninput="updateTipFromSlider()">
     </div>
 
-    <span class="label-small" style="margin-top:10px;">Rate experience</span>
+    <span class="label-small" style="margin-top:20px;">Rate experience</span>
     <span id="rating-val" class="rating-val">0.0</span>
     
     <div class="slider-container">
-        <input type="range" id="rating-slider" min="0" max="5" step="0.1" value="0" oninput="updateRatingDisplay()">
+        <input type="range" id="rating-slider" min="0" max="5" step="0.1" value="0" oninput="updateRating()">
     </div>
 
     <textarea id="comment" class="comment-box" rows="2" placeholder="Add a comment..."></textarea>
@@ -161,16 +161,16 @@
             document.getElementById('restaurant-name').innerText = w.restaurant_id || "Unknown Location";
             document.getElementById('waiter-img').src = w.imageUrl || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
             
-            // Initialize Sliders colors
-            updateTipDisplay();
-            updateRatingDisplay();
+            // Initialize sliders background
+            updateTipFromSlider();
+            updateRating();
 
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('payment-card').classList.remove('hidden');
         } catch { document.getElementById('error-card').classList.remove('hidden'); }
     }
 
-    // --- SLIDER LOGIC ---
+    // --- SLIDER BACKGROUND FILL LOGIC ---
     function updateSliderBackground(slider, filledColor, emptyColor) {
         const val = slider.value;
         const min = slider.min ? slider.min : 0;
@@ -180,47 +180,45 @@
         slider.style.background = `linear-gradient(to right, ${filledColor} 0%, ${filledColor} ${percentage}%, ${emptyColor} ${percentage}%, ${emptyColor} 100%)`;
     }
 
-    function updateTipDisplay() {
+    function updateTipFromSlider() {
         const slider = document.getElementById('tip-slider');
         const display = document.getElementById('amount-text');
         
-        // Update Text
         display.value = parseFloat(slider.value).toFixed(2);
         
-        // Update Color (Orange #FF9800, Light #FFE0B2)
+        // Update Track Fill
         updateSliderBackground(slider, '#FFCC80', '#FFF3E0');
-        
-        // Text Color Logic
+
+        // 3. COLOR CHANGE
         if (parseFloat(slider.value) > 0) {
-            display.style.color = "#FF9800"; // Active Dark
+            display.classList.add('active'); // Turns Orange
         } else {
-            display.style.color = "#bdbdbd"; // Inactive Grey
+            display.classList.remove('active'); // Turns Grey
         }
     }
 
-    function updateRatingDisplay() {
+    function updateRating() {
         const slider = document.getElementById('rating-slider');
-        
-        // Update Text
+        // 4. DISPLAY 0.1 FORMAT
         document.getElementById('rating-val').innerText = parseFloat(slider.value).toFixed(1);
         
-        // Update Color (Blue #29B6F6, Light #E1F5FE)
+        // Update Track Fill
         updateSliderBackground(slider, '#B3E5FC', '#E1F5FE');
     }
 
-    // --- SWIPE LOGIC ---
+    // --- 5. REAL SWIPE LOGIC ---
     const btn = document.getElementById('swipe-btn');
     const track = document.getElementById('swipe-track');
     let isDragging = false;
     let startX, currentX;
     let maxSwipe = 0;
 
-    // Mouse
+    // Mouse Events
     btn.addEventListener('mousedown', startSwipe);
     document.addEventListener('mousemove', moveSwipe);
     document.addEventListener('mouseup', endSwipe);
 
-    // Touch
+    // Touch Events (Mobile)
     btn.addEventListener('touchstart', startSwipe, {passive: false});
     document.addEventListener('touchmove', moveSwipe, {passive: false});
     document.addEventListener('touchend', endSwipe);
@@ -230,7 +228,7 @@
         isDragging = true;
         startX = (e.type === 'touchstart') ? e.touches[0].clientX : e.clientX;
         maxSwipe = track.offsetWidth - btn.offsetWidth;
-        btn.style.transition = 'none'; 
+        btn.style.transition = 'none'; // Remove transition for instant drag
     }
 
     function moveSwipe(e) {
@@ -239,24 +237,28 @@
         const clientX = (e.type === 'touchmove') ? e.touches[0].clientX : e.clientX;
         let delta = clientX - startX;
 
+        // Clamp values
         if (delta < 0) delta = 0;
         if (delta > maxSwipe) delta = maxSwipe;
 
         currentX = delta;
         btn.style.transform = `translateX(${delta}px)`;
+        
+        // Prevent scrolling on mobile while swiping
         if(e.type === 'touchmove') e.preventDefault(); 
     }
 
     function endSwipe() {
         if (!isDragging) return;
         isDragging = false;
-        btn.style.transition = 'transform 0.3s ease'; 
+        btn.style.transition = 'transform 0.3s ease'; // Add transition back for snap effect
 
+        // Threshold to trigger payment (e.g., 85% of width)
         if (currentX > maxSwipe * 0.85) {
-            btn.style.transform = `translateX(${maxSwipe}px)`;
+            btn.style.transform = `translateX(${maxSwipe}px)`; // Lock at end
             initiatePayment();
         } else {
-            btn.style.transform = `translateX(0px)`; 
+            btn.style.transform = `translateX(0px)`; // Snap back
         }
     }
 
@@ -268,6 +270,7 @@
             return; 
         }
         
+        // UI Feedback
         btn.classList.add('processing');
         
         const rating = parseFloat(document.getElementById('rating-slider').value);
