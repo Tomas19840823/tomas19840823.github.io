@@ -5,133 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tip Your Waiter | Tipsy</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
     <style>
         body { font-family: 'Roboto', sans-serif; background-color: #f5f7fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; user-select: none; }
+        .card { background: white; width: 100%; max-width: 380px; padding: 30px 25px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; box-sizing: border-box; }
         
-        /* CARD: Added position relative for the lang button */
-        .card { position: relative; background: white; width: 100%; max-width: 380px; padding: 35px 25px; border-radius: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; box-sizing: border-box; }
-        
-        /* --- LANGUAGE SWITCHER (Inside Card) --- */
-        .lang-container {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            z-index: 100;
-        }
-
-        .lang-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px; 
-            height: 40px;
-            background: #E0F2F1; /* Light Teal background */
-            border-radius: 50%;
-            color: #00897B;       /* Dark Teal Text */
-            cursor: pointer;
-            border: none;
-            outline: none;
-            transition: background 0.2s;
-        }
-        
-        .lang-btn:active { background: #B2DFDB; }
-        .lang-btn span { font-weight: bold; font-size: 14px; }
-
-        .lang-dropdown {
-            position: absolute;
-            top: 110%;
-            right: 0;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            overflow: hidden;
-            display: none;
-            min-width: 80px;
-            text-align: center;
-            z-index: 101;
-        }
-
-        .lang-dropdown.show { display: block; }
-
-        .lang-option {
-            padding: 10px 0;
-            color: #333;
-            font-weight: 500;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .lang-option:hover { background-color: #f5f5f5; }
-
         /* 1. AVATAR: Full Orange Circle */
-        .avatar-container { width: 90px; height: 90px; margin: 0 auto 15px; }
+        .avatar-container { width: 100px; height: 100px; margin: 0 auto 10px; }
         .avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid #FF9800; box-sizing: border-box; }
         
-        h2 { margin: 5px 0 0; color: #333; font-size: 1.8em; font-weight: 700; }
+        h2 { margin: 10px 0 0; color: #333; font-size: 1.8em; font-weight: 700; }
         p.location { color: #999; margin: 5px 0 25px; font-size: 1em; font-weight: 400; }
 
-        /* 3. AMOUNT DISPLAY */
-        .label-small { font-size: 0.85em; color: #999; font-weight: 500; margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
-        .amount-wrapper { display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
+        /* 3. AMOUNT DISPLAY: Orange Color */
+        .label-small { font-size: 0.9em; color: #888; font-weight: 500; margin-bottom: 5px; display: block; }
+        .amount-wrapper { display: flex; justify-content: center; align-items: center; margin-bottom: 15px; }
+        .currency { font-size: 2.5em; color: #FF5722; font-weight: bold; margin-right: 5px; }
         
-        .currency { font-size: 2.8em; color: #FF9800; font-weight: bold; margin-right: 5px; }
-        .amount-display { font-size: 3.5em; color: #bdbdbd; font-weight: bold; border: none; width: 220px; text-align: center; outline: none; background: transparent; transition: color 0.2s; }
-        .amount-display.active { color: #FF9800; } 
+        /* Default grey, turns Orange when active */
+        .amount-display { font-size: 3.5em; color: #e0e0e0; font-weight: bold; border: none; width: 220px; text-align: center; outline: none; background: transparent; transition: color 0.2s; }
+        .amount-display.active { color: #FF5722; }
+
+        /* 2. SLIDERS: Narrow Strip, Vertical Stick */
+        .slider-container { margin: 15px 0 25px; text-align: center; width: 100%; position: relative; height: 40px; display: flex; align-items: center; }
         
-        /* 2. CUSTOM "STICK" SLIDERS (Preserved) */
-        .slider-container { margin: 15px 0 30px; text-align: center; width: 100%; position: relative; height: 40px; display: flex; align-items: center; }
-        
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
-            cursor: pointer;
-            height: 100%; 
+        input[type=range] { 
+            -webkit-appearance: none; 
+            width: 100%; 
+            background: transparent; 
+            cursor: pointer; 
             z-index: 2;
-            position: relative;
         }
         input[type=range]:focus { outline: none; }
-
-        /* TIP SLIDER STYLES */
-        #tip-slider::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 12px; /* Narrow Strip */
-            border-radius: 6px;
-            /* Background handled by JS for fill effect */
+        
+        /* --- TIP SLIDER STYLES --- */
+        #tip-slider::-webkit-slider-runnable-track { 
+            width: 100%; 
+            height: 12px; /* Narrower Strip */
+            background: #FFCC80; 
+            border-radius: 6px; 
+            border: none; 
         }
-        #tip-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 34px; /* Tall Stick */
-            width: 6px;   /* Stick Width */
-            border-radius: 3px;
+        #tip-slider::-webkit-slider-thumb { 
+            -webkit-appearance: none; 
+            height: 32px; /* Tall Stick */
+            width: 8px;   /* Wide Stick thickness */
+            border-radius: 4px; 
             background: #EF6C00; 
-            margin-top: -11px; /* Center Vertical */
-            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+            margin-top: -10px; /* Center Vertical: (12 - 32) / 2 = -10 */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3); 
         }
 
-        /* RATING SLIDER STYLES */
-        #rating-slider::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 12px; /* Narrow Strip */
-            border-radius: 6px;
+        /* --- RATING SLIDER STYLES --- */
+        #rating-slider::-webkit-slider-runnable-track { 
+            width: 100%; 
+            height: 12px; /* Narrower Strip */
+            background: #E3F2FD; 
+            border-radius: 6px; 
         }
-        #rating-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 34px; /* Tall Stick */
-            width: 6px; 
-            border-radius: 3px;
+        #rating-slider::-webkit-slider-thumb { 
+            -webkit-appearance: none; 
+            height: 32px; /* Tall Stick */
+            width: 8px;   /* Wide Stick thickness */
+            border-radius: 4px; 
             background: #0277BD; 
-            margin-top: -11px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+            margin-top: -10px; /* Center Vertical */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3); 
         }
 
-        .rating-val { font-size: 1.6em; color: #FF9800; font-weight: bold; display: block; margin: 5px 0 5px; }
+        /* RATING SECTION */
+        .rating-val { font-size: 1.5em; color: #FF9800; font-weight: bold; display: block; margin: 5px 0 10px; }
 
-        .comment-box { width: 100%; padding: 15px; border: 1px solid #e0e0e0; border-radius: 15px; margin-bottom: 30px; font-family: inherit; font-size: 1em; color: #555; background: #fff; box-sizing: border-box; resize: none; outline: none; }
+        /* COMMENT BOX */
+        .comment-box { width: 100%; padding: 15px; border: 1px solid #e0e0e0; border-radius: 15px; margin-bottom: 25px; font-family: inherit; font-size: 1em; color: #555; background: #fff; box-sizing: border-box; resize: none; outline: none; }
         .comment-box::placeholder { color: #bbb; }
 
-        /* 5. SWIPE BUTTON */
+        /* 5. REAL SWIPE BUTTON */
         .swipe-container { position: relative; width: 100%; height: 60px; background: #eee; border-radius: 30px; overflow: hidden; cursor: pointer; }
         .swipe-text { line-height: 60px; color: #999; font-weight: bold; font-size: 1.1em; padding-left: 20px; z-index: 1; position: relative; pointer-events: none; }
         
@@ -145,12 +93,14 @@
             z-index: 2;
             cursor: grab;
         }
+        .swipe-btn:active { cursor: grabbing; }
         .swipe-arrow { color: white; font-size: 1.4em; font-weight: bold; pointer-events: none; }
 
         .hidden { display: none; }
+        /* Processing State */
         .swipe-btn.processing { width: 100%; border-radius: 30px; transition: width 0.3s; justify-content: center; }
         .swipe-btn.processing .swipe-arrow { display: none; }
-        .swipe-btn.processing::after { content: '...'; color: white; font-weight: bold; font-size: 1.1em; }
+        .swipe-btn.processing::after { content: 'Processing...'; color: white; font-weight: bold; font-size: 1.1em; }
     </style>
 </head>
 <body>
@@ -160,37 +110,27 @@
 
 <div class="card hidden" id="payment-card">
     
-    <div class="lang-container">
-        <button class="lang-btn" onclick="toggleLangMenu()">
-            <span id="current-lang">EN</span>
-        </button>
-        <div class="lang-dropdown" id="lang-menu">
-            <div class="lang-option" onclick="setLanguage('en')">EN</div>
-            <div class="lang-option" onclick="setLanguage('lt')">LT</div>
-        </div>
-    </div>
-
     <div class="avatar-container">
         <img id="waiter-img" src="" class="avatar">
     </div>
     <h2 id="waiter-name">Name</h2>
     <p class="location" id="restaurant-name">Location</p>
 
-    <span class="label-small" id="lbl-tip">I want to tip</span>
+    <span class="label-small">I want to tip</span>
     <div class="amount-wrapper">
         <span class="currency">€</span>
         <input type="text" id="amount-text" class="amount-display" value="0.00" readonly>
     </div>
 
     <div class="slider-container">
-        <input type="range" id="tip-slider" min="0" max="20" step="0.5" value="0" oninput="updateTipDisplay()">
+        <input type="range" id="tip-slider" min="0" max="20" step="0.5" value="0" oninput="updateTipFromSlider()">
     </div>
 
-    <span class="label-small" id="lbl-rate" style="margin-top:10px;">Rate experience</span>
+    <span class="label-small" style="margin-top:20px;">Rate experience</span>
     <span id="rating-val" class="rating-val">0.0</span>
     
     <div class="slider-container">
-        <input type="range" id="rating-slider" min="0" max="5" step="0.1" value="0" oninput="updateRatingDisplay()">
+        <input type="range" id="rating-slider" min="0" max="5" step="0.1" value="0" oninput="updateRating()">
     </div>
 
     <textarea id="comment" class="comment-box" rows="2" placeholder="Add a comment..."></textarea>
@@ -199,7 +139,7 @@
         <div class="swipe-btn" id="swipe-btn">
             <span class="swipe-arrow">➜</span>
         </div>
-        <div class="swipe-text" id="lbl-swipe">Swipe to Pay >>></div>
+        <div class="swipe-text">Swipe to Pay >>></div>
     </div>
 </div>
 
@@ -207,63 +147,6 @@
     const API_BASE = "https://api.tipsy.lt/api"; 
     const urlParams = new URLSearchParams(window.location.search);
     const waiterId = urlParams.get('id');
-
-    // --- TRANSLATIONS ---
-    const translations = {
-        en: {
-            tip: "I want to tip",
-            rate: "Rate experience",
-            comment: "Add a comment...",
-            swipe: "Swipe to Pay >>>",
-            processing: "Processing...",
-            alert_tip: "Please select a tip amount",
-            error: "Error: ",
-            conn_fail: "Connection Failed"
-        },
-        lt: {
-            tip: "Noriu palikti arbatpinigių",
-            rate: "Įvertinkite patirtį",
-            comment: "Pridėti komentarą...",
-            swipe: "Braukite apmokėjimui >>>",
-            processing: "Vykdoma...",
-            alert_tip: "Prašome pasirinkti arbatpinigių sumą",
-            error: "Klaida: ",
-            conn_fail: "Ryšio klaida"
-        }
-    };
-
-    let currentLang = 'en';
-
-    function toggleLangMenu() {
-        document.getElementById('lang-menu').classList.toggle('show');
-    }
-
-    function setLanguage(lang) {
-        currentLang = lang;
-        const t = translations[lang];
-
-        document.getElementById('current-lang').innerText = lang.toUpperCase();
-        
-        document.getElementById('lbl-tip').innerText = t.tip;
-        document.getElementById('lbl-rate').innerText = t.rate;
-        document.getElementById('comment').placeholder = t.comment;
-        document.getElementById('lbl-swipe').innerText = t.swipe;
-
-        // Update processing text style dynamically
-        const style = document.getElementById('dynamic-lang-style') || document.createElement('style');
-        style.id = 'dynamic-lang-style';
-        style.innerHTML = `.swipe-btn.processing::after { content: '${t.processing}'; }`;
-        if (!document.getElementById('dynamic-lang-style')) document.head.appendChild(style);
-
-        document.getElementById('lang-menu').classList.remove('show');
-    }
-
-    // Close menu on outside click
-    window.onclick = function(event) {
-        if (!event.target.closest('.lang-container')) {
-            document.getElementById('lang-menu').classList.remove('show');
-        }
-    }
 
     if (waiterId) fetchWaiter(waiterId);
     else document.getElementById('error-card').classList.remove('hidden');
@@ -278,15 +161,16 @@
             document.getElementById('restaurant-name').innerText = w.restaurant_id || "Unknown Location";
             document.getElementById('waiter-img').src = w.imageUrl || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
             
-            updateTipDisplay();
-            updateRatingDisplay();
+            // Initialize sliders background
+            updateTipFromSlider();
+            updateRating();
 
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('payment-card').classList.remove('hidden');
         } catch { document.getElementById('error-card').classList.remove('hidden'); }
     }
 
-    // --- SLIDER LOGIC ---
+    // --- SLIDER BACKGROUND FILL LOGIC ---
     function updateSliderBackground(slider, filledColor, emptyColor) {
         const val = slider.value;
         const min = slider.min ? slider.min : 0;
@@ -296,37 +180,45 @@
         slider.style.background = `linear-gradient(to right, ${filledColor} 0%, ${filledColor} ${percentage}%, ${emptyColor} ${percentage}%, ${emptyColor} 100%)`;
     }
 
-    function updateTipDisplay() {
+    function updateTipFromSlider() {
         const slider = document.getElementById('tip-slider');
         const display = document.getElementById('amount-text');
         
         display.value = parseFloat(slider.value).toFixed(2);
-        updateSliderBackground(slider, '#FFCC80', '#FFF3E0'); // Orange Fill
+        
+        // Update Track Fill
+        updateSliderBackground(slider, '#FFCC80', '#FFF3E0');
 
+        // 3. COLOR CHANGE
         if (parseFloat(slider.value) > 0) {
-            display.style.color = "#FF9800"; 
+            display.classList.add('active'); // Turns Orange
         } else {
-            display.style.color = "#bdbdbd"; 
+            display.classList.remove('active'); // Turns Grey
         }
     }
 
-    function updateRatingDisplay() {
+    function updateRating() {
         const slider = document.getElementById('rating-slider');
+        // 4. DISPLAY 0.1 FORMAT
         document.getElementById('rating-val').innerText = parseFloat(slider.value).toFixed(1);
-        updateSliderBackground(slider, '#B3E5FC', '#E1F5FE'); // Blue Fill
+        
+        // Update Track Fill
+        updateSliderBackground(slider, '#B3E5FC', '#E1F5FE');
     }
 
-    // --- SWIPE LOGIC ---
+    // --- 5. REAL SWIPE LOGIC ---
     const btn = document.getElementById('swipe-btn');
     const track = document.getElementById('swipe-track');
     let isDragging = false;
     let startX, currentX;
     let maxSwipe = 0;
 
+    // Mouse Events
     btn.addEventListener('mousedown', startSwipe);
     document.addEventListener('mousemove', moveSwipe);
     document.addEventListener('mouseup', endSwipe);
 
+    // Touch Events (Mobile)
     btn.addEventListener('touchstart', startSwipe, {passive: false});
     document.addEventListener('touchmove', moveSwipe, {passive: false});
     document.addEventListener('touchend', endSwipe);
@@ -336,45 +228,49 @@
         isDragging = true;
         startX = (e.type === 'touchstart') ? e.touches[0].clientX : e.clientX;
         maxSwipe = track.offsetWidth - btn.offsetWidth;
-        btn.style.transition = 'none'; 
+        btn.style.transition = 'none'; // Remove transition for instant drag
     }
 
     function moveSwipe(e) {
         if (!isDragging) return;
+        
         const clientX = (e.type === 'touchmove') ? e.touches[0].clientX : e.clientX;
         let delta = clientX - startX;
 
+        // Clamp values
         if (delta < 0) delta = 0;
         if (delta > maxSwipe) delta = maxSwipe;
 
         currentX = delta;
         btn.style.transform = `translateX(${delta}px)`;
+        
+        // Prevent scrolling on mobile while swiping
         if(e.type === 'touchmove') e.preventDefault(); 
     }
 
     function endSwipe() {
         if (!isDragging) return;
         isDragging = false;
-        btn.style.transition = 'transform 0.3s ease'; 
+        btn.style.transition = 'transform 0.3s ease'; // Add transition back for snap effect
 
+        // Threshold to trigger payment (e.g., 85% of width)
         if (currentX > maxSwipe * 0.85) {
-            btn.style.transform = `translateX(${maxSwipe}px)`;
+            btn.style.transform = `translateX(${maxSwipe}px)`; // Lock at end
             initiatePayment();
         } else {
-            btn.style.transform = `translateX(0px)`; 
+            btn.style.transform = `translateX(0px)`; // Snap back
         }
     }
 
     async function initiatePayment() {
         const amount = parseFloat(document.getElementById('amount-text').value);
-        const t = translations[currentLang];
-
         if (amount <= 0) { 
-            alert(t.alert_tip); 
+            alert("Please select a tip amount"); 
             btn.style.transform = `translateX(0px)`;
             return; 
         }
         
+        // UI Feedback
         btn.classList.add('processing');
         
         const rating = parseFloat(document.getElementById('rating-slider').value);
@@ -396,11 +292,11 @@
             if (data.success && data.payment_url) {
                 window.location.href = data.payment_url;
             } else { 
-                alert(t.error + (data.error || "Unknown"));
+                alert("Error: " + (data.error || "Unknown"));
                 resetBtn();
             }
         } catch { 
-            alert(t.conn_fail); 
+            alert("Connection Failed"); 
             resetBtn();
         }
     }
