@@ -23,7 +23,7 @@
         /* Orange text */
         .currency { font-size: 2.8em; color: #FF9800; font-weight: bold; margin-right: 5px; }
         .amount-display { font-size: 3.5em; color: #bdbdbd; font-weight: bold; border: none; width: 220px; text-align: center; outline: none; background: transparent; transition: color 0.2s; }
-        .amount-display.active { color: #bdbdbd; } /* Keep grey until typing/sliding? App shows grey 0.00 */
+        .amount-display.active { color: #FF9800; } /* Keep grey until typing/sliding? App shows grey 0.00 */
         
         /* 2. CUSTOM "STICK" SLIDERS */
         .slider-container { margin: 15px 0 30px; text-align: center; width: 100%; position: relative; height: 40px; display: flex; align-items: center; }
@@ -192,7 +192,7 @@
         
         // Text Color Logic
         if (parseFloat(slider.value) > 0) {
-            display.style.color = "#333"; // Active Dark
+            display.style.color = "#FF9800"; // Active Dark
         } else {
             display.style.color = "#bdbdbd"; // Inactive Grey
         }
