@@ -5,25 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tip Your Waiter | Tipsy</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f5f7fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
-        .avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid #FF9800; margin-bottom: 10px; }
-        h2 { margin: 5px 0; color: #333; }
-        p { color: #888; margin-bottom: 25px; }
+        body { font-family: 'Roboto', sans-serif; background-color: #f5f7fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; width: 100%; max-width: 380px; padding: 40px 30px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; box-sizing: border-box; }
         
+        /* HEADER & AVATAR */
+        .avatar-container { position: relative; width: 100px; height: 100px; margin: 0 auto 15px; }
+        .avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; z-index: 2; }
+        .avatar-arc { position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px; border-radius: 50%; border: 3px solid transparent; border-top-color: #FF9800; z-index: 1; transform: rotate(-45deg); }
+        
+        h2 { margin: 10px 0 5px; color: #333; font-size: 1.8em; font-weight: bold; }
+        p.location { color: #999; margin: 0 0 30px; font-size: 1.1em; }
+
+        /* AMOUNT DISPLAY */
+        .tip-label { font-size: 0.9em; color: #888; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+        .amount-wrapper { display: flex; justify-content: center; align-items: center; margin: 10px 0 20px; }
+        .currency { font-size: 2.5em; color: #FF5722; font-weight: bold; margin-right: 5px; }
+        .amount-display { font-size: 3.5em; color: #ccc; font-weight: bold; border: none; width: 180px; text-align: center; outline: none; background: transparent; }
+        .amount-display.active { color: #333; }
+
         /* SLIDERS */
-        .slider-container { margin: 20px 0; text-align: left; }
-        .label { font-size: 0.9em; color: #888; font-weight: bold; margin-bottom: 5px; display: block; }
-        input[type=range] { width: 100%; -webkit-appearance: none; background: transparent; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #FF9800; cursor: pointer; margin-top: -8px; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #FFCC80; border-radius: 2px; }
+        .slider-container { margin: 25px 0; text-align: center; }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; }
+        input[type=range]:focus { outline: none; }
         
-        /* INPUTS */
-        .amount-display { font-size: 2.5em; color: #FF5722; font-weight: bold; margin: 10px 0; border: none; text-align: center; width: 100%; outline: none; }
-        .comment-box { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; margin-top: 15px; box-sizing: border-box; font-family: inherit; resize: none; }
+        /* Orange Tip Slider */
+        #tip-slider::-webkit-slider-runnable-track { width: 100%; height: 12px; background: #FFCC80; border-radius: 10px; border: none; }
+        #tip-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 6px; border-radius: 3px; background: #FF9800; margin-top: -6px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+        /* Blue Rating Slider */
+        .rating-label { font-size: 0.9em; color: #888; font-weight: bold; margin-top: 20px; display: block; }
+        .rating-val { font-size: 1.5em; color: #FF9800; font-weight: bold; display: block; margin-bottom: 5px; }
         
-        /* BUTTON */
-        .btn { margin-top: 20px; background: linear-gradient(to right, #FF9800, #FF5722); color: white; border: none; padding: 16px; width: 100%; border-radius: 30px; font-size: 1.1em; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        #rating-slider::-webkit-slider-runnable-track { width: 100%; height: 8px; background: #E1F5FE; border-radius: 10px; }
+        #rating-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #039BE5; margin-top: -4px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+        /* COMMENT BOX */
+        .comment-box { width: 100%; padding: 15px; border: 1px solid #e0e0e0; border-radius: 15px; margin-top: 10px; font-family: inherit; font-size: 1em; color: #555; background: #f9f9f9; box-sizing: border-box; resize: none; outline: none; }
+        .comment-box::placeholder { color: #bbb; }
+
+        /* SWIPE BUTTON (VISUAL REPLICA) */
+        .swipe-btn-container { margin-top: 30px; position: relative; height: 60px; background: #eee; border-radius: 30px; overflow: hidden; cursor: pointer; transition: background 0.3s; }
+        .swipe-btn-container:active { background: #e0e0e0; }
+        
+        .swipe-circle { width: 50px; height: 50px; background: #FF9800; border-radius: 50%; position: absolute; top: 5px; left: 5px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: transform 0.2s; }
+        .swipe-arrow { color: white; font-size: 1.2em; font-weight: bold; }
+        
+        .swipe-text { line-height: 60px; color: #999; font-weight: bold; font-size: 1.1em; padding-left: 40px; user-select: none; }
+        
         .hidden { display: none; }
     </style>
 </head>
@@ -33,27 +61,38 @@
 <div class="card hidden" id="error-card"><h3 style="color:red">Waiter Not Found</h3></div>
 
 <div class="card hidden" id="payment-card">
-    <img id="waiter-img" src="" class="avatar">
-    <h2 id="waiter-name">Name</h2>
-    <p id="restaurant-name">Location</p>
-
-    <span class="label" style="text-align:center">I want to tip</span>
-    <div style="display:flex; justify-content:center; align-items:center; color:#FF5722; font-weight:bold;">
-        <span style="font-size:2.5em">€</span>
-        <input type="text" id="amount-text" class="amount-display" value="0.00" oninput="manualInput()">
+    
+    <div class="avatar-container">
+        <div class="avatar-arc"></div>
+        <img id="waiter-img" src="" class="avatar">
     </div>
+    <h2 id="waiter-name">Name</h2>
+    <p class="location" id="restaurant-name">Location</p>
+
+    <div class="tip-label">I want to tip</div>
+    <div class="amount-wrapper">
+        <span class="currency">€</span>
+        <input type="text" id="amount-text" class="amount-display" value="0.00" readonly>
+    </div>
+
     <div class="slider-container">
         <input type="range" id="tip-slider" min="0" max="20" step="0.5" value="0" oninput="updateTipFromSlider()">
     </div>
 
-    <div class="slider-container">
-        <span class="label">Rate Experience: <span id="rating-val" style="color:#FF9800">5.0</span></span>
-        <input type="range" id="rating-slider" min="1" max="5" step="0.5" value="5" oninput="updateRating()">
+    <span class="rating-label">Rate experience</span>
+    <span id="rating-val" class="rating-val">0.0</span>
+    <div class="slider-container" style="margin-top:0;">
+        <input type="range" id="rating-slider" min="0" max="5" step="1" value="0" oninput="updateRating()">
     </div>
 
     <textarea id="comment" class="comment-box" rows="2" placeholder="Add a comment..."></textarea>
 
-    <button class="btn" onclick="initiatePayment()">Swipe to Pay >>></button>
+    <div class="swipe-btn-container" onclick="initiatePayment()">
+        <div class="swipe-circle">
+            <span class="swipe-arrow">➜</span>
+        </div>
+        <div class="swipe-text">Swipe to Pay >>></div>
+    </div>
 </div>
 
 <script>
@@ -81,41 +120,56 @@
 
     function updateTipFromSlider() {
         const val = document.getElementById('tip-slider').value;
-        document.getElementById('amount-text').value = parseFloat(val).toFixed(2);
-    }
-    
-    function manualInput() {
-        const val = parseFloat(document.getElementById('amount-text').value) || 0;
-        document.getElementById('tip-slider').value = val > 20 ? 20 : val;
+        const display = document.getElementById('amount-text');
+        
+        display.value = parseFloat(val).toFixed(2);
+        
+        // Change color when amount > 0
+        if (val > 0) display.classList.add('active');
+        else display.classList.remove('active');
     }
 
     function updateRating() {
-        document.getElementById('rating-val').innerText = document.getElementById('rating-slider').value;
+        const val = document.getElementById('rating-slider').value;
+        // Format to 1 decimal place (e.g., 5.0)
+        document.getElementById('rating-val').innerText = parseFloat(val).toFixed(1);
     }
 
     async function initiatePayment() {
         const amount = parseFloat(document.getElementById('amount-text').value);
-        if (amount <= 0) { alert("Please enter an amount"); return; }
+        if (amount <= 0) { alert("Please select a tip amount"); return; }
         
         const rating = parseFloat(document.getElementById('rating-slider').value);
         const comment = document.getElementById('comment').value;
 
-        try {
-            const res = await fetch(`${API_BASE}/payment/initiate-simple`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    sender_id: 0, 
-                    waiter_id: waiterId,
-                    amount: Math.round(amount * 100),
-                    rating: Math.round(rating), // Send Rating
-                    comment: comment            // Send Comment
-                })
-            });
-            const data = await res.json();
-            if (data.success && data.payment_url) window.location.href = data.payment_url;
-            else alert("Error: " + (data.error || "Unknown"));
-        } catch { alert("Connection Failed"); }
+        // Animate button slightly to show click
+        const btn = document.querySelector('.swipe-circle');
+        btn.style.transform = 'translateX(280px)'; // Visual swipe effect
+        
+        setTimeout(async () => {
+             try {
+                const res = await fetch(`${API_BASE}/payment/initiate-simple`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sender_id: 0, 
+                        waiter_id: waiterId,
+                        amount: Math.round(amount * 100),
+                        rating: Math.round(rating),
+                        comment: comment
+                    })
+                });
+                const data = await res.json();
+                if (data.success && data.payment_url) window.location.href = data.payment_url;
+                else { 
+                    alert("Error: " + (data.error || "Unknown"));
+                    btn.style.transform = 'translateX(0)'; // Reset on error
+                }
+            } catch { 
+                alert("Connection Failed"); 
+                btn.style.transform = 'translateX(0)'; // Reset on error
+            }
+        }, 300); // Wait for animation
     }
 </script>
 </body>
