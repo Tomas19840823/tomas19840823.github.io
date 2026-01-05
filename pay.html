@@ -6,63 +6,69 @@
     <title>Tip Your Waiter | Tipsy</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Roboto', sans-serif; background-color: #f5f7fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        body { font-family: 'Roboto', sans-serif; background-color: #f5f7fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; user-select: none; }
         .card { background: white; width: 100%; max-width: 380px; padding: 30px 25px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; box-sizing: border-box; }
         
-        /* HEADER & AVATAR MATCHING APP */
-        .avatar-container { position: relative; width: 100px; height: 100px; margin: 0 auto 10px; }
-        .avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; z-index: 2; }
-        /* The Orange Arc */
-        .avatar-arc { position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px; border-radius: 50%; border: 3px solid transparent; border-top-color: #FF9800; z-index: 1; transform: rotate(-45deg); }
+        /* 1. AVATAR: Full Orange Circle */
+        .avatar-container { width: 100px; height: 100px; margin: 0 auto 10px; }
+        .avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid #FF9800; box-sizing: border-box; }
         
         h2 { margin: 10px 0 0; color: #333; font-size: 1.8em; font-weight: 700; }
         p.location { color: #999; margin: 5px 0 25px; font-size: 1em; font-weight: 400; }
 
-        /* AMOUNT DISPLAY */
+        /* 3. AMOUNT DISPLAY: Orange Color */
         .label-small { font-size: 0.9em; color: #888; font-weight: 500; margin-bottom: 5px; display: block; }
         .amount-wrapper { display: flex; justify-content: center; align-items: center; margin-bottom: 15px; }
         .currency { font-size: 2.5em; color: #FF5722; font-weight: bold; margin-right: 5px; }
-        /* Grey when 0, Orange when active - handled by JS */
-        .amount-display { font-size: 3.5em; color: #e0e0e0; font-weight: bold; border: none; width: 200px; text-align: center; outline: none; background: transparent; transition: color 0.2s; }
-        .amount-display.active { color: #333; }
+        
+        /* Default grey, turns Orange when active */
+        .amount-display { font-size: 3.5em; color: #e0e0e0; font-weight: bold; border: none; width: 220px; text-align: center; outline: none; background: transparent; transition: color 0.2s; }
+        .amount-display.active { color: #FF5722; }
 
-        /* ANDROID STYLE SLIDERS */
+        /* 2. SLIDERS: Wide Sticks */
         .slider-container { margin: 15px 0 25px; text-align: center; width: 100%; }
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; }
         input[type=range]:focus { outline: none; }
         
-        /* 1. TIP SLIDER (Thick Orange Track) */
+        /* TIP SLIDER */
         #tip-slider::-webkit-slider-runnable-track { width: 100%; height: 24px; background: #FFCC80; border-radius: 12px; border: none; }
-        #tip-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%; background: #FF9800; margin-top: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: scale(0.8); }
+        /* Wide Stick Thumb */
+        #tip-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 60px; border-radius: 12px; background: #FF9800; margin-top: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        /* 2. RATING SECTION */
+        /* RATING SECTION */
         .rating-val { font-size: 1.5em; color: #FF9800; font-weight: bold; display: block; margin: 5px 0 10px; }
         
-        /* RATING SLIDER (Thick Blue/Grey Track) */
+        /* RATING SLIDER */
         #rating-slider::-webkit-slider-runnable-track { width: 100%; height: 16px; background: #E3F2FD; border-radius: 8px; }
-        #rating-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #2196F3; margin-top: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        /* Wide Stick Thumb (Blue) */
+        #rating-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 60px; border-radius: 8px; background: #2196F3; margin-top: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
         /* COMMENT BOX */
         .comment-box { width: 100%; padding: 15px; border: 1px solid #e0e0e0; border-radius: 15px; margin-bottom: 25px; font-family: inherit; font-size: 1em; color: #555; background: #fff; box-sizing: border-box; resize: none; outline: none; }
         .comment-box::placeholder { color: #bbb; }
 
-        /* SWIPE BUTTON SIMULATION */
-        .swipe-container { position: relative; width: 100%; height: 60px; background: #eee; border-radius: 30px; overflow: hidden; cursor: pointer; user-select: none; }
-        .swipe-text { line-height: 60px; color: #999; font-weight: bold; font-size: 1.1em; padding-left: 20px; z-index: 1; position: relative; }
+        /* 5. REAL SWIPE BUTTON */
+        .swipe-container { position: relative; width: 100%; height: 60px; background: #eee; border-radius: 30px; overflow: hidden; cursor: pointer; }
+        .swipe-text { line-height: 60px; color: #999; font-weight: bold; font-size: 1.1em; padding-left: 20px; z-index: 1; position: relative; pointer-events: none; }
         
         .swipe-btn { 
-            width: 50px; height: 50px; 
+            width: 60px; height: 60px; 
             background: #FF9800; 
             border-radius: 50%; 
-            position: absolute; top: 5px; left: 5px; 
+            position: absolute; top: 0; left: 0; 
             display: flex; align-items: center; justify-content: center; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
-            transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1); 
             z-index: 2;
+            cursor: grab;
         }
-        .swipe-arrow { color: white; font-size: 1.4em; font-weight: bold; }
+        .swipe-btn:active { cursor: grabbing; }
+        .swipe-arrow { color: white; font-size: 1.4em; font-weight: bold; pointer-events: none; }
 
         .hidden { display: none; }
+        /* Processing State */
+        .swipe-btn.processing { width: 100%; border-radius: 30px; transition: width 0.3s; justify-content: center; }
+        .swipe-btn.processing .swipe-arrow { display: none; }
+        .swipe-btn.processing::after { content: 'Processing...'; color: white; font-weight: bold; font-size: 1.1em; }
     </style>
 </head>
 <body>
@@ -73,13 +79,12 @@
 <div class="card hidden" id="payment-card">
     
     <div class="avatar-container">
-        <div class="avatar-arc"></div>
         <img id="waiter-img" src="" class="avatar">
     </div>
     <h2 id="waiter-name">Name</h2>
     <p class="location" id="restaurant-name">Location</p>
 
-    <span class="label-small">I want to tip1</span>
+    <span class="label-small">I want to tip</span>
     <div class="amount-wrapper">
         <span class="currency">€</span>
         <input type="text" id="amount-text" class="amount-display" value="0.00" readonly>
@@ -93,13 +98,13 @@
     <span id="rating-val" class="rating-val">0.0</span>
     
     <div class="slider-container">
-        <input type="range" id="rating-slider" min="0" max="5" step="1" value="0" oninput="updateRating()">
+        <input type="range" id="rating-slider" min="0" max="5" step="0.1" value="0" oninput="updateRating()">
     </div>
 
     <textarea id="comment" class="comment-box" rows="2" placeholder="Add a comment..."></textarea>
 
-    <div class="swipe-container" onclick="initiatePayment()">
-        <div class="swipe-btn">
+    <div class="swipe-container" id="swipe-track">
+        <div class="swipe-btn" id="swipe-btn">
             <span class="swipe-arrow">➜</span>
         </div>
         <div class="swipe-text">Swipe to Pay >>></div>
@@ -121,7 +126,6 @@
             const w = await res.json();
             
             document.getElementById('waiter-name').innerText = w.name;
-            // Handle null restaurantId like the App does
             document.getElementById('restaurant-name').innerText = w.restaurant_id || "Unknown Location";
             document.getElementById('waiter-img').src = w.imageUrl || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
             
@@ -136,58 +140,118 @@
         
         display.value = parseFloat(val).toFixed(2);
         
-        // Match App logic: Grey if 0, Dark/Colored if > 0
+        // 3. COLOR CHANGE
         if (parseFloat(val) > 0) {
-            display.style.color = "#333";
+            display.classList.add('active'); // Turns Orange
         } else {
-            display.style.color = "#e0e0e0";
+            display.classList.remove('active'); // Turns Grey
         }
     }
 
     function updateRating() {
         const val = document.getElementById('rating-slider').value;
-        // App shows "5.0" format
+        // 4. DISPLAY 0.1 FORMAT
         document.getElementById('rating-val').innerText = parseFloat(val).toFixed(1);
+    }
+
+    // --- 5. REAL SWIPE LOGIC ---
+    const btn = document.getElementById('swipe-btn');
+    const track = document.getElementById('swipe-track');
+    let isDragging = false;
+    let startX, currentX;
+    let maxSwipe = 0;
+
+    // Mouse Events
+    btn.addEventListener('mousedown', startSwipe);
+    document.addEventListener('mousemove', moveSwipe);
+    document.addEventListener('mouseup', endSwipe);
+
+    // Touch Events (Mobile)
+    btn.addEventListener('touchstart', startSwipe, {passive: false});
+    document.addEventListener('touchmove', moveSwipe, {passive: false});
+    document.addEventListener('touchend', endSwipe);
+
+    function startSwipe(e) {
+        if (btn.classList.contains('processing')) return;
+        isDragging = true;
+        startX = (e.type === 'touchstart') ? e.touches[0].clientX : e.clientX;
+        maxSwipe = track.offsetWidth - btn.offsetWidth;
+        btn.style.transition = 'none'; // Remove transition for instant drag
+    }
+
+    function moveSwipe(e) {
+        if (!isDragging) return;
+        
+        const clientX = (e.type === 'touchmove') ? e.touches[0].clientX : e.clientX;
+        let delta = clientX - startX;
+
+        // Clamp values
+        if (delta < 0) delta = 0;
+        if (delta > maxSwipe) delta = maxSwipe;
+
+        currentX = delta;
+        btn.style.transform = `translateX(${delta}px)`;
+        
+        // Prevent scrolling on mobile while swiping
+        if(e.type === 'touchmove') e.preventDefault(); 
+    }
+
+    function endSwipe() {
+        if (!isDragging) return;
+        isDragging = false;
+        btn.style.transition = 'transform 0.3s ease'; // Add transition back for snap effect
+
+        // Threshold to trigger payment (e.g., 85% of width)
+        if (currentX > maxSwipe * 0.85) {
+            btn.style.transform = `translateX(${maxSwipe}px)`; // Lock at end
+            initiatePayment();
+        } else {
+            btn.style.transform = `translateX(0px)`; // Snap back
+        }
     }
 
     async function initiatePayment() {
         const amount = parseFloat(document.getElementById('amount-text').value);
-        if (amount <= 0) { alert("Please select a tip amount"); return; }
+        if (amount <= 0) { 
+            alert("Please select a tip amount"); 
+            btn.style.transform = `translateX(0px)`;
+            return; 
+        }
+        
+        // UI Feedback
+        btn.classList.add('processing');
         
         const rating = parseFloat(document.getElementById('rating-slider').value);
         const comment = document.getElementById('comment').value;
 
-        // Visual "Swipe" Animation
-        const btn = document.querySelector('.swipe-btn');
-        const containerWidth = document.querySelector('.swipe-container').offsetWidth;
-        // Move button to end of container
-        btn.style.transform = `translateX(${containerWidth - 60}px)`;
-        
-        // Wait for animation, then execute
-        setTimeout(async () => {
-             try {
-                const res = await fetch(`${API_BASE}/payment/initiate-simple`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        sender_id: 0, 
-                        waiter_id: waiterId,
-                        amount: Math.round(amount * 100),
-                        rating: Math.round(rating),
-                        comment: comment
-                    })
-                });
-                const data = await res.json();
-                if (data.success && data.payment_url) window.location.href = data.payment_url;
-                else { 
-                    alert("Error: " + (data.error || "Unknown"));
-                    btn.style.transform = 'translateX(0)'; // Reset
-                }
-            } catch { 
-                alert("Connection Failed"); 
-                btn.style.transform = 'translateX(0)'; // Reset
+        try {
+            const res = await fetch(`${API_BASE}/payment/initiate-simple`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sender_id: 0, 
+                    waiter_id: waiterId,
+                    amount: Math.round(amount * 100),
+                    rating: Math.round(rating),
+                    comment: comment
+                })
+            });
+            const data = await res.json();
+            if (data.success && data.payment_url) {
+                window.location.href = data.payment_url;
+            } else { 
+                alert("Error: " + (data.error || "Unknown"));
+                resetBtn();
             }
-        }, 400);
+        } catch { 
+            alert("Connection Failed"); 
+            resetBtn();
+        }
+    }
+
+    function resetBtn() {
+        btn.classList.remove('processing');
+        btn.style.transform = `translateX(0px)`;
     }
 </script>
 </body>
