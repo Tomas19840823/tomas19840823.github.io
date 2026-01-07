@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tipsy - Find & Tip</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-orange: #FF9800;
+            --deep-orange: #F57C00;
+            --primary-teal: #00897B;
+            --light-teal: #4DB6AC;
+        }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Poppins', sans-serif; overflow: hidden; }
+
+        /* --- MAP CONTAINER --- */
+        #map { height: 100%; width: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+
+        /* --- HEADER (Floating) --- */
+        .header {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .badge {
+            background: linear-gradient(90deg, var(--primary-orange), var(--primary-teal));
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-size: 1.1rem;
+        }
+
+        /* --- FABs (Floating Action Buttons) --- */
+        .fab-container {
+            position: absolute;
+            bottom: 100px; /* Space for search bar */
+            right: 20px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .fab {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: none;
+        }
+        .fab:active { transform: scale(0.95); }
+        
+        .fab-list { background: linear-gradient(135deg, #FFE0B2, #FFB74D); color: #E65100; }
+        .fab-pros { background: linear-gradient(135deg, #FFC107, #FF5722); }
+        .fab-loc { background: linear-gradient(135deg, #81D4FA, #29B6F6); }
+
+        /* --- SEARCH BAR --- */
+        .search-bar {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 10;
+            background: white;
+            padding: 15px;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+        }
+        .search-icon { margin-right: 10px; color: #757575; }
+        .search-text { color: #757575; font-size: 1rem; }
+
+        /* --- MODAL / BOTTOM SHEET --- */
+        .bottom-sheet {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            background: white;
+            z-index: 20;
+            border-radius: 24px 24px 0 0;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+            transform: translateY(110%); /* Hidden by default */
+            transition: transform 0.3s ease-out;
+            display: flex;
+            flex-direction: column;
+        }
+        .bottom-sheet.active { transform: translateY(0); }
+        
+        .sheet-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sheet-title { font-weight: bold; font-size: 1.2rem; color: var(--deep-orange); }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999; }
+        
+        .sheet-content {
+            overflow-y: auto;
+            flex: 1;
+            padding: 0 20px;
+        }
+
+        /* --- LIST ITEMS --- */
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #eee;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+        .info { flex: 1; }
+        .name { font-weight: bold; color: #333; }
+        .sub-text { font-size: 0.9rem; color: #757575; }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <div class="header">
+        <div class="badge">Tipsy</div>
+    </div>
+
+    <div class="fab-container">
+        <button class="fab fab-list" onclick="openSheet('locations')">☰</button>
+        <button class="fab fab-pros" onclick="openSheet('pros')">👤</button>
+        <button class="fab fab-loc" onclick="centerMap()">📍</button>
+    </div>
+
+    <div class="search-bar" onclick="alert('Search feature coming soon to web!')">
+        <span class="search-icon">🔍</span>
+        <span class="search-text">Search for waiters or places...</span>
+    </div>
+
+    <div id="bottom-sheet" class="bottom-sheet">
+        <div class="sheet-header">
+            <span id="sheet-title" class="sheet-title">Waiters Nearby</span>
+            <button class="close-btn" onclick="closeSheet()">×</button>
+        </div>
+        <div id="sheet-list" class="sheet-content">
+            </div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&callback=initMap" async defer></script>
+
+    <script>
+        let map;
+        let allWaiters = [];
+        let userLat = 54.6872; // Default Vilnius
+        let userLng = 25.2797;
+        let markers = [];
+
+        async function initMap() {
+            // 1. Initialize Map
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: userLat, lng: userLng },
+                zoom: 13,
+                disableDefaultUI: true, // App-like feel
+                styles: [
+                    { "elementType": "geometry", "stylers": [{ "color": "#f5f5f5" }] },
+                    { "elementType": "labels.icon", "stylers": [{ "visibility": "off" }] },
+                    { "elementType": "labels.text.fill", "stylers": [{ "color": "#616161" }] },
+                    { "elementType": "labels.text.stroke", "stylers": [{ "color": "#f5f5f5" }] },
+                    { "featureType": "poi", "elementType": "geometry", "stylers": [{ "color": "#eeeeee" }] },
+                    { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#c9c9c9" }] }
+                ]
+            });
+
+            // 2. Try to get User Location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        userLat = position.coords.latitude;
+                        userLng = position.coords.longitude;
+                        map.setCenter({ lat: userLat, lng: userLng });
+                        map.setZoom(15);
+                        
+                        // Add Blue Dot for User
+                        new google.maps.Marker({
+                            position: { lat: userLat, lng: userLng },
+                            map: map,
+                            icon: {
+                                path: google.maps.SymbolPath.CIRCLE,
+                                scale: 8,
+                                fillColor: "#29B6F6",
+                                fillOpacity: 1,
+                                strokeColor: "white",
+                                strokeWeight: 2
+                            }
+                        });
+
+                        // Fetch waiters nearby
+                        fetchWaiters();
+                    },
+                    () => { console.log("Location permission denied"); fetchWaiters(); }
+                );
+            } else {
+                fetchWaiters();
+            }
+        }
+
+        async function fetchWaiters() {
+            try {
+                // Call your Python Backend
+                const response = await fetch('/api/search_waiters', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ latitude: userLat, longitude: userLng })
+                });
+                
+                allWaiters = await response.json();
+                renderMarkers();
+            } catch (e) {
+                console.error("Error fetching waiters:", e);
+            }
+        }
+
+        function renderMarkers() {
+            // Clear old markers
+            markers.forEach(m => m.setMap(null));
+            markers = [];
+
+            allWaiters.forEach(waiter => {
+                if (waiter.latitude && waiter.longitude) {
+                    // Create Orange Dot Marker
+                    const marker = new google.maps.Marker({
+                        position: { lat: waiter.latitude, lng: waiter.longitude },
+                        map: map,
+                        icon: {
+                            path: google.maps.SymbolPath.CIRCLE,
+                            scale: 6, // 12dp equivalent
+                            fillColor: "#FF9800",
+                            fillOpacity: 1,
+                            strokeColor: "white",
+                            strokeWeight: 1.5
+                        }
+                    });
+
+                    // On Click -> Go to Payment/Profile Page
+                    marker.addListener("click", () => {
+                        window.location.href = `pay.html?id=${waiter.id}`;
+                    });
+
+                    markers.push(marker);
+                }
+            });
+        }
+
+        // --- UI FUNCTIONS ---
+
+        function centerMap() {
+            map.panTo({ lat: userLat, lng: userLng });
+            map.setZoom(15);
+        }
+
+        function openSheet(type) {
+            const sheet = document.getElementById("bottom-sheet");
+            const title = document.getElementById("sheet-title");
+            const list = document.getElementById("sheet-list");
+            
+            list.innerHTML = ""; // Clear list
+
+            if (type === 'pros') {
+                title.innerText = "Service Pros";
+                title.style.color = "#FF5722";
+                
+                // Render Waiters
+                allWaiters.forEach(waiter => {
+                    const div = document.createElement("div");
+                    div.className = "list-item";
+                    div.onclick = () => window.location.href = `pay.html?id=${waiter.id}`;
+                    
+                    const imgUrl = waiter.image_url || "https://via.placeholder.com/50";
+                    
+                    div.innerHTML = `
+                        <img src="${imgUrl}" class="avatar">
+                        <div class="info">
+                            <div class="name">${waiter.name}</div>
+                            <div class="sub-text">${waiter.restaurant_id || 'Unknown Location'}</div>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                });
+
+            } else {
+                title.innerText = "Locations";
+                title.style.color = "#E65100";
+                
+                // Group by Restaurant logic
+                // (Simplified for demo: just showing unique names)
+                const locations = [...new Set(allWaiters.map(w => w.restaurant_id).filter(Boolean))];
+                
+                locations.forEach(loc => {
+                    const div = document.createElement("div");
+                    div.className = "list-item";
+                    div.innerHTML = `
+                        <div class="avatar" style="background:#FFF3E0; display:flex; align-items:center; justify-content:center; color:#E65100;">📍</div>
+                        <div class="info">
+                            <div class="name">${loc}</div>
+                            <div class="sub-text">Tap to see waiters here</div>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                });
+            }
+
+            sheet.classList.add("active");
+        }
+
+        function closeSheet() {
+            document.getElementById("bottom-sheet").classList.remove("active");
+        }
+    </script>
+</body>
+</html>
