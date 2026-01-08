@@ -228,17 +228,19 @@
 
         async function fetchWaiters() {
             try {
-                // Call your Python Backend
-                const response = await fetch('/api/search_waiters', {
+                // UPDATE THIS LINE TO USE YOUR FULL DOMAIN
+                const response = await fetch('https://tipsy.lt/api/search_waiters', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ latitude: userLat, longitude: userLng })
                 });
                 
                 allWaiters = await response.json();
+                console.log("Waiters loaded:", allWaiters.length); // Debug message
                 renderMarkers();
             } catch (e) {
                 console.error("Error fetching waiters:", e);
+                alert("Could not connect to server. Check Console (F12) for details.");
             }
         }
 
